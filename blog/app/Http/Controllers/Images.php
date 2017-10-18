@@ -1,23 +1,25 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
-
 use App;
-
-use App\Helpers\Visitors;
+use App\Helpers\HelperFunctions;
+use App\Helpers\Cookie;
 
 class Images extends Controller
 {
     // First Controller
     public function index(){
-        $userIp = visitors::getUserIP();
-        echo $userIp;
+        $userIp = HelperFunctions::getUserIP();
+        
         $this->visitorProcess($userIp);
         $this->updateVisitorMeta($userIp);
+
+        $cookie = new Cookie();
+        $cookie->setCookieName('GSXR-750');
+        $cookie->createCookieValue(100, $userIp);
+        echo $cookie->getCookieValue();
     }
 
     /**
@@ -60,7 +62,7 @@ class Images extends Controller
      */
     private function updateVisitorMeta( $userIp ){
         $rawHeaders = getallheaders();
-        $cleanHeaders = visitors::removeHyphensFromKeys( $rawHeaders );
+        $cleanHeaders = HelperFunctions::removeHyphensFromKeys( $rawHeaders );
         
         extract($cleanHeaders);
 
